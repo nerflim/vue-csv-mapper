@@ -8,9 +8,10 @@
     </div>
     <a-table
       :columns="columns"
-      :data-source="data"
+      :data-source="contacts.data"
+      :loading="loading"
       size="middle"
-      :pagination="{ pageSize: 5 }"
+      :pagination="{ current: contacts.page, pageSize: contacts.pageSize, total: contacts.total }"
       @change="onChange"
     />
   </div>
@@ -60,66 +61,22 @@ const columns = [
   }
 ];
 
-const data = [
-  {
-    id: 1,
-    team_id: '123',
-    name: 'Milfren John',
-    phone: 123456,
-    email: 'nerflimjohn@gmail.com',
-    sticky_phone_number_id: 1234
-  },
-  {
-    id: 2,
-    team_id: '123',
-    name: 'Milfren John',
-    phone: 123456,
-    email: 'nerflimjohn@gmail.com',
-    sticky_phone_number_id: 1234
-  },
-  {
-    id: 3,
-    team_id: '123',
-    name: 'Milfren John',
-    phone: 123456,
-    email: 'nerflimjohn@gmail.com',
-    sticky_phone_number_id: 1234
-  },
-  {
-    id: 4,
-    team_id: '123',
-    name: 'Milfren John',
-    phone: 123456,
-    email: 'nerflimjohn@gmail.com',
-    sticky_phone_number_id: 1234
-  },
-  {
-    id: 5,
-    team_id: '123',
-    name: 'Milfren John',
-    phone: 123456,
-    email: 'nerflimjohn@gmail.com',
-    sticky_phone_number_id: 1234
-  },
-  {
-    id: 6,
-    team_id: '123',
-    name: 'Milfren John',
-    phone: 123456,
-    email: 'nerflimjohn@gmail.com',
-    sticky_phone_number_id: 1234
-  }
-];
-
 export default Vue.extend({
   components: {
     Empty
   },
   data() {
     return {
-      data,
       columns
     };
+  },
+  computed: {
+    contacts() {
+      return this.$store.state.contact.contacts;
+    },
+    loading() {
+      return this.$store.state.contact.loading;
+    }
   },
   methods: {
     onImport: function() {
@@ -127,7 +84,24 @@ export default Vue.extend({
     },
     onChange: function(pagination: any, filters: any, sorter: any, { currentDataSource }: any) {
       console.log(pagination, filters, sorter, currentDataSource);
+      const payload = {
+        pageSize: pagination.pageSize,
+        page: pagination.current,
+        sort: sorter?.columnKey,
+        sortBy: sorter?.order === 'ascend' ? 'asc' : 'desc'
+      };
+      this.$store.dispatch('contact/getContactsAsync', payload);
     }
+  },
+  mounted() {
+    const payload = {
+      pageSize: this.contacts.pageSize,
+      page: this.contacts.page,
+      sort: this.contacts.sort,
+      sortBy: this.contacts.sortBy
+    };
+
+    this.$store.dispatch('contact/getContactsAsync', payload);
   }
 });
 </script>
