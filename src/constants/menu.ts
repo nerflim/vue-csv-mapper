@@ -6,5 +6,5 @@ interface Menu {
 
 export const menu: Menu[] = [
   { url: '/contacts', icon: 'contacts', title: 'Contacts' },
-  { url: '/import-contacts', icon: 'upload', title: 'Import Contacts' }
+  { url: '/import-contacts', icon: 'cloud-upload', title: 'Import Contacts' }
 ];
