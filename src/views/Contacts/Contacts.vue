@@ -18,7 +18,6 @@
 </template>
 
 <script lang="ts">
-/* eslint-disable @typescript-eslint/camelcase */
 import Vue from 'vue';
 import Empty from './Empty.vue';
 
