@@ -10,7 +10,7 @@
       </a-menu>
     </a-layout-sider>
     <a-layout>
-      <a-layout-header class="header-container" />
+      <a-layout-header class="header-container">CSV Mapper</a-layout-header>
       <a-layout-content class="content-container">
         <div class="content">
           <slot />
@@ -53,7 +53,9 @@ export default Vue.extend({
 
   .header-container {
     background: #fff;
-    padding: 0;
+    padding: 0 24px;
+    font-size: 24px;
+    font-weight: bold;
   }
   .content-container {
     margin: 24px;
@@ -67,11 +69,6 @@ export default Vue.extend({
 
   .logo {
     height: 64px;
-  }
-  .ant-layout-sider-trigger {
-    top: 0;
-    height: 64px;
-    line-height: 64px;
   }
 }
 </style>

@@ -1,5 +1,6 @@
 <template>
   <div v-if="dataLoaded">
+    <h1>Contacts</h1>
     <Empty v-if="!contacts.data.length" />
     <div v-else>
       <div class="actions-container">
@@ -123,6 +124,5 @@ export default Vue.extend({
 <style scoped lang="scss">
 .actions-container {
   margin-bottom: 24px;
-  text-align: right;
 }
 </style>

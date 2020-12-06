@@ -1,5 +1,5 @@
 <template>
-  <div style="display: flex; justify-content: center; align-items: center;">
+  <div class="container">
     <div v-if="csvData.length && !isSaved && !isError" class="review-container">
       <div class="action-container">
         <a-button :disabled="isSaving" @click="goBack">
@@ -147,24 +147,31 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="scss">
-.upload-container {
-  text-align: center;
-  width: 100%;
-}
-.upload-csv-icon {
-  font-size: 80px;
-}
-.review-container {
-  width: 100%;
+.container {
+  min-height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-  .action-container {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 24px;
+  .upload-container {
+    text-align: center;
+    width: 100%;
   }
+  .upload-csv-icon {
+    font-size: 80px;
+  }
+  .review-container {
+    width: 100%;
 
-  .csv-table {
-    margin-top: 24px;
+    .action-container {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .csv-table {
+      margin-top: 24px;
+    }
   }
 }
 </style>
