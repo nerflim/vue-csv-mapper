@@ -9,7 +9,14 @@
           >Save <a-icon type="right-circle"
         /></a-button>
       </div>
-      <a-table :columns="columns" :data-source="csvData" size="middle" :loading="loading" />
+      <h1>Review CSV</h1>
+      <a-table
+        :columns="columns"
+        :data-source="csvData"
+        size="middle"
+        :loading="loading"
+        class="csv-table"
+      />
     </div>
 
     <div v-else class="upload-container">
@@ -34,8 +41,6 @@ interface Data {
   csvData: any[];
   csvHeader: string[];
 }
-
-const mainHeaders = ['team_id', 'name', 'phone', 'email', 'sticky_phone_number_id'];
 
 export default Vue.extend({
   data(): Data {
@@ -66,9 +71,7 @@ export default Vue.extend({
 
           const csvData = parsedData.map(item => {
             const parsedItem = item.split(',');
-            const data = {
-              custom: [] as { key: string; value: string | number }[]
-            };
+            const data = {};
 
             headers.forEach((headerItem: string, headerIndex: number) => {
               data[headerItem] = parsedItem[headerIndex];
@@ -91,11 +94,13 @@ export default Vue.extend({
 
       return false;
     },
-    onSave() {
+    async onSave() {
       this.loading = true;
-      setTimeout(() => {
-        this.loading = false;
-      }, 2000);
+      await this.$store
+        .dispatch('contact/importContactsAsync', { data: this.csvData, keys: this.csvHeader })
+        .then(() => {
+          this.loading = false;
+        });
     },
     goBack() {
       this.csvHeader = [];
@@ -119,6 +124,10 @@ export default Vue.extend({
     display: flex;
     justify-content: space-between;
     margin-bottom: 24px;
+  }
+
+  .csv-table {
+    margin-top: 24px;
   }
 }
 </style>

@@ -10,12 +10,13 @@
 import Vue from 'vue';
 import Layout from './components/Layout/Layout.vue';
 import VueRouter, { Route } from 'vue-router';
+import { Store } from 'vuex';
 
 declare module 'vue/types/vue' {
   interface Vue {
     $router: VueRouter;
     $route: Route;
-    $store: any;
+    $store: Store<any>;
   }
 }
 

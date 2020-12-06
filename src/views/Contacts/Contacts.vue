@@ -1,19 +1,21 @@
 <template>
-  <div>
-    <Empty />
-    <div class="actions-container">
-      <a-button key="console" type="primary" @click="onImport" class="import-btn">
-        <a-icon type="cloud-upload" /> Import Contacts
-      </a-button>
+  <div v-if="dataLoaded">
+    <Empty v-if="!contacts.data.length" />
+    <div v-else>
+      <div class="actions-container">
+        <a-button key="console" type="primary" @click="onImport" class="import-btn">
+          <a-icon type="cloud-upload" /> Import Contacts
+        </a-button>
+      </div>
+      <a-table
+        :columns="columns"
+        :data-source="contacts.data"
+        :loading="loading"
+        size="middle"
+        :pagination="{ current: contacts.page, pageSize: contacts.pageSize, total: contacts.total }"
+        @change="onChange"
+      />
     </div>
-    <a-table
-      :columns="columns"
-      :data-source="contacts.data"
-      :loading="loading"
-      size="middle"
-      :pagination="{ current: contacts.page, pageSize: contacts.pageSize, total: contacts.total }"
-      @change="onChange"
-    />
   </div>
 </template>
 
@@ -21,7 +23,7 @@
 import Vue from 'vue';
 import Empty from './Empty.vue';
 
-const columns = [
+const staticColumns = [
   {
     title: 'ID',
     dataIndex: 'id',
@@ -66,7 +68,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      columns
+      dataLoaded: false
     };
   },
   computed: {
@@ -75,6 +77,17 @@ export default Vue.extend({
     },
     loading() {
       return this.$store.state.contact.loading;
+    },
+    columns() {
+      return [
+        ...staticColumns,
+        ...this.$store.state.contact.customAttributes.map((item: string) => ({
+          title: item,
+          key: item,
+          dataIndex: item,
+          sorter: false
+        }))
+      ];
     }
   },
   methods: {
@@ -92,7 +105,7 @@ export default Vue.extend({
       this.$store.dispatch('contact/getContactsAsync', payload);
     }
   },
-  mounted() {
+  async mounted() {
     const payload = {
       pageSize: this.contacts.pageSize,
       page: this.contacts.page,
@@ -100,7 +113,9 @@ export default Vue.extend({
       sortBy: this.contacts.sortBy
     };
 
-    this.$store.dispatch('contact/getContactsAsync', payload);
+    await this.$store
+      .dispatch('contact/getContactsAsync', payload)
+      .then(() => (this.dataLoaded = true));
   }
 });
 </script>

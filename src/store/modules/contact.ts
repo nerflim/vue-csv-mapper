@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { getContacts } from '@/services/contact';
+import { getContacts, importContacts } from '@/services/contact';
 
 export interface ContactItem {
   id: number;
@@ -26,6 +26,7 @@ export interface Contact {
 
 interface ContactState {
   contacts: Contact;
+  customAttributes: string[];
   loading: boolean;
 }
 
@@ -42,7 +43,7 @@ const contact: ContactModel = {
     contacts: {
       total: 0,
       page: 0,
-      pageSize: 3,
+      pageSize: 10,
       pageCount: 0,
       sort: '',
       sortBy: '',
@@ -50,6 +51,7 @@ const contact: ContactModel = {
       to: 0,
       data: []
     },
+    customAttributes: [],
     loading: false
   },
   mutations: {
@@ -64,6 +66,9 @@ const contact: ContactModel = {
         data: payload.data
       };
     },
+    setCustomAttributes(state: ContactState, payload: string[]) {
+      state.customAttributes = payload;
+    },
     setLoading(state: ContactState, payload: boolean) {
       state.loading = payload;
     }
@@ -71,14 +76,24 @@ const contact: ContactModel = {
   actions: {
     async getContactsAsync({ commit }: any, payload: any) {
       commit('setLoading', true);
-      try {
-        const data = await getContacts(payload);
-        commit('setContacts', data);
-        console.log('CONTACTS', data);
-      } catch (err) {
-        console.log(err);
-      }
-      commit('setLoading', false);
+
+      return await getContacts(payload)
+        .then(res => {
+          commit('setContacts', res.contacts);
+          commit('setCustomAttributes', res.customAttributes);
+        })
+        .catch(err => console.log(err))
+        .finally(() => commit('setLoading', false));
+    },
+    async importContactsAsync({ commit }: any, payload: any) {
+      commit('setLoading', true);
+
+      return await importContacts(payload)
+        .then(res => {
+          console.log('IMPORT SUCCESS', res);
+        })
+        .catch(err => console.log(err))
+        .finally(() => commit('setLoading', false));
     }
   }
 };
