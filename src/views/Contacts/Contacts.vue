@@ -14,6 +14,7 @@
         size="middle"
         :pagination="{ current: contacts.page, pageSize: contacts.pageSize, total: contacts.total }"
         @change="onChange"
+        :row-key="record => record.id"
       />
     </div>
   </div>
@@ -95,7 +96,6 @@ export default Vue.extend({
       this.$router.push('/import-contacts');
     },
     onChange: function(pagination: any, filters: any, sorter: any, { currentDataSource }: any) {
-      console.log(pagination, filters, sorter, currentDataSource);
       const payload = {
         pageSize: pagination.pageSize,
         page: pagination.current,

@@ -1,11 +1,11 @@
 <template>
   <div style="display: flex; justify-content: center; align-items: center;">
-    <div v-if="csvData.length" class="review-container">
+    <div v-if="csvData.length && !isSaved && !isError" class="review-container">
       <div class="action-container">
-        <a-button :disabled="loading" @click="goBack">
+        <a-button :disabled="isSaving" @click="goBack">
           <a-icon type="left-circle" /> Go Back
         </a-button>
-        <a-button type="primary" :loading="loading" @click="onSave"
+        <a-button type="primary" :loading="isSaving" @click="onSave"
           >Save <a-icon type="right-circle"
         /></a-button>
       </div>
@@ -14,12 +14,30 @@
         :columns="columns"
         :data-source="csvData"
         size="middle"
-        :loading="loading"
+        :loading="isSaving"
         class="csv-table"
       />
     </div>
 
+    <a-result
+      v-else-if="isSaving && isSaved && !isError"
+      status="success"
+      title="Successfully imported contacts!"
+    >
+      <template #extra>
+        <a-button key="contacts" type="primary" @click="goToContacts">
+          Go to Contacts
+        </a-button>
+        <a-button key="importAgain" @click="onReset">
+          Import CSV Again
+        </a-button>
+      </template>
+    </a-result>
+
     <div v-else class="upload-container">
+      <div v-if="isError">
+        <a-alert type="error" message="Import failed! Please try again" banner />
+      </div>
       <div class="upload-csv-icon">
         <a-icon type="file-text" theme="twoTone" />
       </div>
@@ -32,12 +50,13 @@
 </template>
 
 <script lang="ts">
-import { setTimeout } from 'timers';
 import Vue from 'vue';
 
 interface Data {
   fileList: any[];
-  loading: boolean;
+  isSaving: boolean;
+  isSaved: boolean;
+  isError: boolean;
   csvData: any[];
   csvHeader: string[];
 }
@@ -46,7 +65,9 @@ export default Vue.extend({
   data(): Data {
     return {
       fileList: [],
-      loading: false,
+      isSaving: false,
+      isSaved: false,
+      isError: false,
       csvData: [],
       csvHeader: []
     };
@@ -85,6 +106,7 @@ export default Vue.extend({
       }
     },
     beforeUpload(file: any) {
+      this.isError = false;
       const reader = new FileReader();
 
       reader.onload = e => {
@@ -94,17 +116,31 @@ export default Vue.extend({
 
       return false;
     },
+    onReset() {
+      this.goBack();
+      this.isSaving = false;
+      this.isSaved = false;
+      this.isError = false;
+    },
     async onSave() {
-      this.loading = true;
+      this.isSaving = true;
       await this.$store
         .dispatch('contact/importContactsAsync', { data: this.csvData, keys: this.csvHeader })
         .then(() => {
-          this.loading = false;
+          this.isError = false;
+          this.isSaved = true;
+        })
+        .catch(() => {
+          this.onReset();
+          this.isError = true;
         });
     },
     goBack() {
       this.csvHeader = [];
       this.csvData = [];
+    },
+    goToContacts() {
+      this.$router.push('/contacts');
     }
   }
 });
@@ -113,6 +149,7 @@ export default Vue.extend({
 <style scoped lang="scss">
 .upload-container {
   text-align: center;
+  width: 100%;
 }
 .upload-csv-icon {
   font-size: 80px;

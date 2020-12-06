@@ -82,18 +82,12 @@ const contact: ContactModel = {
           commit('setContacts', res.contacts);
           commit('setCustomAttributes', res.customAttributes);
         })
-        .catch(err => console.log(err))
         .finally(() => commit('setLoading', false));
     },
     async importContactsAsync({ commit }: any, payload: any) {
       commit('setLoading', true);
 
-      return await importContacts(payload)
-        .then(res => {
-          console.log('IMPORT SUCCESS', res);
-        })
-        .catch(err => console.log(err))
-        .finally(() => commit('setLoading', false));
+      return await importContacts(payload).finally(() => commit('setLoading', false));
     }
   }
 };
