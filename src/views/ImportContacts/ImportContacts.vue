@@ -92,7 +92,7 @@ export default Vue.extend({
 
           const csvData = parsedData.map(item => {
             const parsedItem = item.split(',');
-            const data = {};
+            const data: any = {};
 
             headers.forEach((headerItem: string, headerIndex: number) => {
               data[headerItem] = parsedItem[headerIndex];
@@ -109,7 +109,7 @@ export default Vue.extend({
       this.isError = false;
       const reader = new FileReader();
 
-      reader.onload = e => {
+      reader.onload = (e: any) => {
         this.parseText(e.target.result);
       };
       reader.readAsText(file);

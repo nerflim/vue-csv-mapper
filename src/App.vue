@@ -17,6 +17,7 @@ declare module 'vue/types/vue' {
     $router: VueRouter;
     $route: Route;
     $store: Store<any>;
+    csvHeader: any[];
   }
 }
 
