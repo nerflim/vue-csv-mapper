@@ -4,10 +4,14 @@
 ```
 yarn install
 ```
-
-### Compiles and hot-reloads for development
+## Add this to your .env variable and add the API_BASE_URL value
 ```
-yarn serve
+VUE_APP_API_BASE_URL=
+```
+
+### Compiles and hot-reloads for development and opens the browser
+```
+yarn serve --open
 ```
 
 ### Compiles and minifies for production
@@ -23,11 +27,6 @@ yarn test:unit
 ### Run your end-to-end tests
 ```
 yarn test:e2e
-```
-
-### Lints and fixes files
-```
-yarn lint
 ```
 
 ### Customize configuration
